@@ -26,7 +26,7 @@ namespace MVCStudentInformation.Controllers
 
 
                 var student = repo.GetAllStudents();
-                return View("GetAllStudents", student);
+                return View("GetAllStudent", student);
             }
             catch(Exception ex)
             {
@@ -114,7 +114,6 @@ namespace MVCStudentInformation.Controllers
 
                         return RedirectToAction(nameof(StudentInformation));
 
-                        return View("AddStudent", details);
                     
 
 
@@ -148,7 +147,7 @@ namespace MVCStudentInformation.Controllers
                 ViewBag.GenderList = repo.GetGender();
                 
 
-                return View("_AddOrEdit",student);
+                return View("EditStudent",student);
             }
             catch(Exception ex)
             {
