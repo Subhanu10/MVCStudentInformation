@@ -1,14 +1,9 @@
 ﻿@model IEnumerable<dataAccessLayer.StudentInformation>
 
-@{      
-    ViewData["Title"] = "AllStudent";
-}
-   
-<h1>AllStudent</h1>
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="AllStudent"></a>
 </p>
-<table class="table table-bordered" id="MyDataTable">
+<table class="table">
     <thead>
         <tr>
             <th>
@@ -66,19 +61,21 @@
                 @Html.DisplayFor(modelItem => item.DOB)
             </td>
             <td>
-                @Html.ActionLink("Edit", "Edit", new {  id=item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id=item.Id })
+
+                <button class="btn btn-primary"
+                        onclick="openPopup('@Url.Action("AddOrEdit", "Student", new { id = item.Id })')">
+                    Edit
+                </button>
+                <button class="btn btn-primary"
+                        onclick="openPopup('@Url.Action("_Details", "Student", new { id = item.Id })')">
+                    Details
+                </button>
+                <button class="btn btn-primary"
+                        onclick="openPopup('@Url.Action("_Delete", "Student", new { id = item.Id })')">
+                    Delete
+                </button>
             </td>
         </tr>
 }
     </tbody>
 </table>
-    @section Scripts{ 
-    <script>
-        $(document).ready(function () {
-            $('#MyDataTable').DataTable();
-        });
-    </script>
-    }   
-

@@ -1,0 +1,52 @@
+﻿@model IEnumerable<dataAccessLayer.StudentInformation>
+
+@{
+    ViewData["Title"] = "ListOfStudent";
+}
+<div id="AllStudent"></div>
+
+<button class="btn btn-primary"
+        onclick="openPopup('@Url.Action("CreateOrEdit", "Student")')">
+    Create New
+</button>
+<partial name="_ListAllStudent" model="Model" />
+
+<div class="modal fade" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content" id="myModelContent">
+
+        </div>
+    </div>
+</div>
+
+@section  Scripts { 
+<script>   
+    function openPopup(url) {
+
+        $.get(url, function (data) {
+
+            console.log(data);
+            $("#myModelContent").html(data);
+            $("#myModal").modal("show");
+        });
+    }
+
+    $("#formAddOrEdit").submit(function (e) {
+        e.preventDefault();
+        $.ajex({
+            url: this.action,
+            type: this.method,
+            data: $(this).serialize(),
+            success: function (res) {
+                if (res.success) {
+                    $("#form-modal").modal("hide");
+                    location.reload();
+                }
+                else {
+                    $("#form-modal.modal-body").html(res)
+                }
+            }
+        });
+    });
+</script>
+}

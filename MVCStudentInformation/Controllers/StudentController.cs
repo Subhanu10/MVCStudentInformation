@@ -28,7 +28,7 @@ namespace MVCStudentInformation.Controllers
                 var student = repo.GetAllStudents();
                 return View("GetAllStudent", student);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.Message));
             }
@@ -46,7 +46,7 @@ namespace MVCStudentInformation.Controllers
                 }
                 return View(student);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.Message));
             }
@@ -57,23 +57,23 @@ namespace MVCStudentInformation.Controllers
         {
             try
             {
-                
+
                 var stateList = repo.GetStates();
-                ViewBag.States = stateList.Select(s =>new SelectListItem
+                ViewBag.States = stateList.Select(s => new SelectListItem
                 {
                     Text = s.StateName,
                     Value = s.StateId.ToString()
-                }).ToList();  
+                }).ToList();
 
 
-              
+
                 ViewBag.GenderList = repo.GetGender();
-               
+
                 return View("Create", new StudentInformation());
             }
-            catch(Exception ex) 
-           
-            
+            catch (Exception ex)
+
+
             {
                 return View("Error", new ErrorViewModel(ex.Message));
             }
@@ -107,14 +107,14 @@ namespace MVCStudentInformation.Controllers
                         return View("Create", details);
                     }
 
-                    
 
-                        repo.AddStudent(details);
-                        TempData["Success"] = "Student added successfully!";
 
-                        return RedirectToAction(nameof(StudentInformation));
+                    repo.AddStudent(details);
+                    TempData["Success"] = "Student added successfully!";
 
-                    
+                    return RedirectToAction(nameof(StudentInformation));
+
+
 
 
                 }
@@ -141,15 +141,15 @@ namespace MVCStudentInformation.Controllers
                 {
                     Text = s.StateName,
                     Value = s.StateId.ToString(),
-                  
+
                 }).ToList();
 
                 ViewBag.GenderList = repo.GetGender();
-                
 
-                return View("EditStudent",student);
+
+                return View("EditStudent", student);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.Message));
             }
@@ -167,7 +167,7 @@ namespace MVCStudentInformation.Controllers
                 {
                     Text = s.StateName,
                     Value = s.StateId.ToString(),
-                 
+
                 }).ToList();
 
 
@@ -204,9 +204,9 @@ namespace MVCStudentInformation.Controllers
                 {
                     return NotFound();
                 }
-                return View("DeleteStudent",student);
+                return View("DeleteStudent", student);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.Message));
             }
@@ -222,10 +222,108 @@ namespace MVCStudentInformation.Controllers
                 repo.DeleteStudent(id);
                 return RedirectToAction(nameof(StudentInformation));
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.Message));
+            }
+        }
+
+        //____________________________________________________________________________________________________________________________________________
+
+        // GET: StudentController
+        public ActionResult AllStudent()
+        {
+            try
+            {
+
+
+                var student = repo.GetAllStudents();
+                return View("index", student);
+            }
+            catch (Exception ex)
+            {
+                return View("Error", new ErrorViewModel(ex.Message));
+            }
+        }
+
+        // GET: StudentController/Create
+        public ActionResult CreateOrEdit(int id = 0)
+        {
+            try
+            {
+
+                var stateList = repo.GetStates();
+                ViewBag.States = stateList.Select(s => new SelectListItem
+                {
+                    Text = s.StateName,
+                    Value = s.StateId.ToString()
+                }).ToList();
+                ViewBag.GenderList = repo.GetGender();
+
+
+                if (id == 0)
+                {
+                    return PartialView("_AddOrEdit", new StudentInformation());
+                }
+                else
+                {
+                    var student = repo.GetStudentById(id);
+                    return PartialView("_AddOrEdit", student);
+                }
+
+
+            }
+            catch (Exception ex)
+
+
+            {
+                return View("Error", new ErrorViewModel(ex.Message));
+            }
+        }
+
+        // POST: StudentController/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult AddOrEdit(StudentInformation details)
+        {
+            try
+            {
+
+                var stateList = repo.GetStates();
+                ViewBag.States = stateList.Select(s => new SelectListItem
+                {
+                    Text = s.StateName,
+                    Value = s.StateId.ToString()
+                }).ToList();
+
+                ViewBag.GenderList = repo.GetGender();
+
+                if (!ModelState.IsValid)
+                {
+                    return PartialView("_AddOrEdit", details);
+                }
+                if (repo.CheckDuplicate(details.Id, details.Email, details.MobileNumber))
+                {
+                    ModelState.AddModelError("", "Email or MobileNumber already exists!");
+
+                    return PartialView("_AddOrEdit", details);
+                }
+                if (details.Id == 0)
+                {
+                    repo.AddStudent(details);
+
+                    return Json(new { success = true, message = "Student added successfully!" });
+                }
+                repo.UpdateStudent(details);
+                return Json(new { success = true, message = "Student updated successfully!" });
+            }
+
+            catch (Exception ex)
             {
                 return View("Error", new ErrorViewModel(ex.Message));
             }
         }
     }
 }
+        
+                    
